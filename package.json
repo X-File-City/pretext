@@ -13,5 +13,8 @@
   "scripts": {
     "check": "tsc && oxlint --type-aware src",
     "serve": "bun --hot serve.ts"
+  },
+  "dependencies": {
+    "@napi-rs/canvas": "^0.1.95"
   }
 }
