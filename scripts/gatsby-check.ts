@@ -89,6 +89,8 @@ const widths = process.argv.slice(2)
 const targetWidths = widths.length > 0 ? widths : [300, 400, 600, 800]
 const port = Number.parseInt(process.env['GATSBY_CHECK_PORT'] ?? '3210', 10)
 const baseUrl = `http://localhost:${port}/gatsby`
+const browser = (process.env['GATSBY_CHECK_BROWSER'] ?? 'chrome').toLowerCase()
+const diagnosticMode = browser === 'safari' ? 'light' : 'full'
 
 function sleep(ms: number): Promise<void> {
   return new Promise(resolve => setTimeout(resolve, ms))
@@ -111,7 +113,19 @@ async function waitForServer(): Promise<void> {
   throw new Error(`Timed out waiting for local Bun server on ${baseUrl}`)
 }
 
-function navigateChrome(url: string): void {
+function navigateBrowser(url: string): void {
+  if (browser === 'safari') {
+    execFileSync('osascript', [
+      '-e',
+      'tell application "Safari" to activate',
+      '-e',
+      'tell application "Safari" to if (count of windows) = 0 then make new document',
+      '-e',
+      `tell application "Safari" to set URL of current tab of front window to ${JSON.stringify(url)}`,
+    ], { encoding: 'utf8' })
+    return
+  }
+
   execFileSync('osascript', [
     '-e',
     'tell application "Google Chrome" to activate',
@@ -122,8 +136,18 @@ function navigateChrome(url: string): void {
   ], { encoding: 'utf8' })
 }
 
-function readChromeReportText(): string {
+function readBrowserReportText(): string {
   try {
+    if (browser === 'safari') {
+      const url = execFileSync('osascript', [
+        '-e',
+        'tell application "Safari" to get URL of current tab of front window',
+      ], { encoding: 'utf8' }).trim()
+      const hashIndex = url.indexOf('#report=')
+      if (hashIndex === -1) return ''
+      return decodeURIComponent(url.slice(hashIndex + '#report='.length))
+    }
+
     return execFileSync('osascript', [
       '-e',
       'tell application "Google Chrome" to execute active tab of front window javascript "(() => { const el = document.getElementById(\'gatsby-report\'); return el && el.dataset.ready === \'1\' && el.textContent ? el.textContent : \'\'; })()"',
@@ -133,12 +157,12 @@ function readChromeReportText(): string {
   }
 }
 
-async function loadChromeReport(url: string, expectedRequestId: string): Promise<GatsbyReport> {
-  navigateChrome(url)
+async function loadBrowserReport(url: string, expectedRequestId: string): Promise<GatsbyReport> {
+  navigateBrowser(url)
 
   for (let i = 0; i < 600; i++) {
     await sleep(100)
-    const reportJson = readChromeReportText()
+    const reportJson = readBrowserReportText()
     if (reportJson === '' || reportJson === 'null') continue
 
     const report = JSON.parse(reportJson) as GatsbyReport
@@ -147,7 +171,7 @@ async function loadChromeReport(url: string, expectedRequestId: string): Promise
     }
   }
 
-  throw new Error('Timed out waiting for Gatsby report from Chrome')
+  throw new Error(`Timed out waiting for Gatsby report from ${browser}`)
 }
 
 function formatWidth(width: number): string {
@@ -237,8 +261,8 @@ try {
 
   for (const width of targetWidths) {
     const requestId = `${Date.now()}-${width}-${Math.random().toString(36).slice(2, 8)}`
-    const url = `${baseUrl}?report=1&width=${width}&requestId=${requestId}`
-    const report = await loadChromeReport(url, requestId)
+    const url = `${baseUrl}?report=1&diagnostic=${diagnosticMode}&width=${width}&requestId=${requestId}`
+    const report = await loadBrowserReport(url, requestId)
     printReport(report)
   }
 } finally {

@@ -6,8 +6,11 @@
   },
   "scripts": {
     "accuracy-check": "bun run scripts/accuracy-check.ts",
+    "accuracy-check:firefox": "ACCURACY_CHECK_BROWSER=firefox bun run scripts/accuracy-check.ts",
+    "accuracy-check:safari": "ACCURACY_CHECK_BROWSER=safari bun run scripts/accuracy-check.ts",
     "check": "tsc && oxlint --type-aware src",
     "gatsby-check": "bun run scripts/gatsby-check.ts",
+    "gatsby-check:safari": "GATSBY_CHECK_BROWSER=safari bun run scripts/gatsby-check.ts",
     "start": "bun --no-hmr pages/*.html"
   },
   "devDependencies": {

@@ -41,6 +41,21 @@ type GatsbyReport = {
   message?: string
 }
 
+type GatsbyNavigationReport = {
+  status: 'ready' | 'error'
+  requestId?: string
+  width?: number
+  predictedHeight?: number
+  actualHeight?: number
+  diffPx?: number
+  predictedLineCount?: number
+  browserLineCount?: number
+  mismatchCount?: number
+  firstMismatch?: GatsbyLineMismatch | null
+  firstBreakMismatch?: Pick<GatsbyBreakMismatch, 'line' | 'deltaText' | 'oursContext' | 'browserContext' | 'reasonGuess'> | null
+  message?: string
+}
+
 type GatsbyBreakMismatch = {
   line: number
   start: number
@@ -177,6 +192,7 @@ document.body.appendChild(reportEl)
 
 const params = new URLSearchParams(location.search)
 const reportMode = params.get('report') === '1'
+const diagnosticMode = params.get('diagnostic') ?? 'full'
 const requestId = params.get('requestId') ?? undefined
 const prepared = prepareWithSegments(text, FONT)
 const segmentSpans = buildSegmentSpans(prepared)
@@ -203,6 +219,48 @@ function measureFullTextWidth(text: string): number {
 
 function withRequestId<T extends GatsbyReport>(report: T): GatsbyReport {
   return requestId === undefined ? report : { ...report, requestId }
+}
+
+function toNavigationReport(report: GatsbyReport): GatsbyNavigationReport {
+  if (report.status === 'error') {
+    return {
+      status: report.status,
+      ...(report.requestId === undefined ? {} : { requestId: report.requestId }),
+      ...(report.message === undefined ? {} : { message: report.message }),
+    }
+  }
+
+  return {
+    status: report.status,
+    ...(report.requestId === undefined ? {} : { requestId: report.requestId }),
+    ...(report.width === undefined ? {} : { width: report.width }),
+    ...(report.predictedHeight === undefined ? {} : { predictedHeight: report.predictedHeight }),
+    ...(report.actualHeight === undefined ? {} : { actualHeight: report.actualHeight }),
+    ...(report.diffPx === undefined ? {} : { diffPx: report.diffPx }),
+    ...(report.predictedLineCount === undefined ? {} : { predictedLineCount: report.predictedLineCount }),
+    ...(report.browserLineCount === undefined ? {} : { browserLineCount: report.browserLineCount }),
+    ...(report.mismatchCount === undefined ? {} : { mismatchCount: report.mismatchCount }),
+    ...(report.firstMismatch === undefined ? {} : { firstMismatch: report.firstMismatch }),
+    ...(report.firstBreakMismatch === undefined
+      ? {}
+      : report.firstBreakMismatch === null
+        ? { firstBreakMismatch: null }
+        : {
+            firstBreakMismatch: {
+              line: report.firstBreakMismatch.line,
+              deltaText: report.firstBreakMismatch.deltaText,
+              oursContext: report.firstBreakMismatch.oursContext,
+              browserContext: report.firstBreakMismatch.browserContext,
+              reasonGuess: report.firstBreakMismatch.reasonGuess,
+            },
+          }),
+  }
+}
+
+function publishNavigationReport(report: GatsbyReport): void {
+  const navigationReport = toNavigationReport(report)
+  const encoded = encodeURIComponent(JSON.stringify(navigationReport))
+  history.replaceState(null, '', `${location.pathname}${location.search}#report=${encoded}`)
 }
 
 function formatBreakContext(text: string, breakOffset: number, radius = 32): string {
@@ -564,6 +622,18 @@ function buildReport(width: number, predictedHeight: number, actualHeight: numbe
   }
 
   const contentWidth = width - PADDING * 2
+  if (diagnosticMode !== 'full') {
+    return withRequestId({
+      status: 'ready',
+      width,
+      contentWidth,
+      predictedHeight,
+      actualHeight,
+      diagnosticHeight,
+      diffPx: predictedHeight - actualHeight,
+    })
+  }
+
   const ourLines = getOurLines(prepared, contentWidth)
   const browserLines = getBrowserLines(prepared, diagnosticDiv)
   const ourJoinedDiffOffset = getJoinedTextMismatchOffset(ourLines)
@@ -647,6 +717,7 @@ function setWidth(width: number) {
   reportEl.dataset['ready'] = '1'
   window.__GATSBY_REPORT__ = report
   window.__GATSBY_READY__ = true
+  publishNavigationReport(report)
 }
 
 slider.addEventListener('input', () => {
@@ -667,6 +738,7 @@ window.__GATSBY_READY__ = false
 window.__GATSBY_REPORT__ = withRequestId({ status: 'error', message: 'Pending initial layout' })
 reportEl.textContent = ''
 stats.textContent = 'Loading...'
+history.replaceState(null, '', `${location.pathname}${location.search}`)
 
 const initialWidth = parseInitialWidth()
 
@@ -685,6 +757,7 @@ async function init() {
     reportEl.dataset['ready'] = '1'
     window.__GATSBY_REPORT__ = report
     window.__GATSBY_READY__ = true
+    publishNavigationReport(report)
   }
 }
 

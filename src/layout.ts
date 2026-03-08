@@ -63,8 +63,25 @@ function measureSegment(seg: string, cache: Map<string, number>): number {
   return w
 }
 
-// Browsers can keep a line that overflows by a tiny subpixel amount.
-const lineFitEpsilon = 0.002
+function getLineFitEpsilon(): number {
+  if (typeof navigator === 'undefined') return 0.002
+
+  const ua = navigator.userAgent
+  const vendor = navigator.vendor
+  const isSafari =
+    vendor === 'Apple Computer, Inc.' &&
+    ua.includes('Safari/') &&
+    !ua.includes('Chrome/') &&
+    !ua.includes('Chromium/') &&
+    !ua.includes('CriOS/') &&
+    !ua.includes('FxiOS/') &&
+    !ua.includes('EdgiOS/')
+
+  // WebKit is slightly more permissive than Chromium/Gecko at the line edge.
+  return isSafari ? 1 / 64 : 0.002
+}
+
+const lineFitEpsilon = getLineFitEpsilon()
 
 function parseFontSize(font: string): number {
   const m = font.match(/(\d+(?:\.\d+)?)\s*px/)
@@ -713,7 +730,7 @@ export function layoutWithLines(prepared: PreparedTextWithSegments, maxWidth: nu
       const gw = gWidths[g]!
       const gText = gTexts[g]!
 
-      if (lineW > 0 && lineW + gw > maxWidth) {
+      if (lineW > 0 && lineW + gw > maxWidth + lineFitEpsilon) {
         pushCurrentLine()
         lineCount++
         lineW = gw

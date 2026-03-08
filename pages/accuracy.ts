@@ -36,6 +36,8 @@ type AccuracyReport = {
   message?: string
 }
 
+type AccuracyNavigationReport = AccuracyReport
+
 declare global {
   interface Window {
     __ACCURACY_READY__?: boolean
@@ -62,6 +64,13 @@ function publishReport(report: AccuracyReport): void {
   reportEl.dataset['ready'] = '1'
   window.__ACCURACY_REPORT__ = report
   window.__ACCURACY_READY__ = true
+  publishNavigationReport(report)
+}
+
+function publishNavigationReport(report: AccuracyReport): void {
+  const navigationReport: AccuracyNavigationReport = report
+  const encoded = encodeURIComponent(JSON.stringify(navigationReport))
+  history.replaceState(null, '', `${location.pathname}${location.search}#report=${encoded}`)
 }
 
 type DiagnosticUnit = {
@@ -209,6 +218,7 @@ function render() {
   window.__ACCURACY_REPORT__ = withRequestId({ status: 'error', message: 'Pending sweep' })
   reportEl.textContent = ''
   reportEl.dataset['ready'] = '0'
+  history.replaceState(null, '', `${location.pathname}${location.search}`)
 
   requestAnimationFrame(() => {
     try {
