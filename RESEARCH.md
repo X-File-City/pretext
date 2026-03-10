@@ -858,6 +858,25 @@ We also hardened the single-snippet probe tooling:
 - `/probe` and `bun run probe-check` now accept `method=range|span`
 - for the tested Myanmar snippet, the local line-break mismatch reproduced under both methods, which ruled out a `Range`-vs-`span` extraction artifact
 
+Current fuller-width picture is less perfect than the sampled sweep:
+- Chrome full `step=10` sweep still has a small negative field (`56/61 exact`)
+- Safari is better on the same corpus, but still not exact at every width
+- the common remaining widths (`350`, `690`) are one-line misses in both engines
+
+Two broader Myanmar experiments were worth trying and worth rejecting:
+- allowing ordinary Myanmar word segments to break at grapheme boundaries during normal wrapping
+- gluing the quote follower `ဟု` after a closing quote cluster like `ပါ”ဟု`
+
+Both had the same pattern:
+- they improved Chrome on several widths
+- they made Safari worse on other widths
+- so neither was a safe keep for the shared engine
+
+Interpretation:
+- the remaining Myanmar field is not obviously dirty data anymore
+- it is also not yielding to simple “more break opportunities” heuristics
+- if we revisit Myanmar, the next step should be either a better diagnostic model for Myanmar line extraction or a more principled line-break unit model, not another narrow glue patch by instinct
+
 ## Sampled cross-font corpus matrix
 
 The first font-axis pass was lighter-weight on purpose: keep the same corpora and widths, but swap only
