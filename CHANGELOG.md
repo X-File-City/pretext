@@ -6,7 +6,7 @@ All notable user-facing changes to this project will live here.
 
 ### Added
 
-- A new `/demos/input-box` demo showing an auto-sizing multiline textarea driven by Pretext, plus live line and segment inspection.
+- A new `/demos/accordion` demo showing expand/collapse text panels whose body heights come from Pretext.
 
 ### Changed
 
