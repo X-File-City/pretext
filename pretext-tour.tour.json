@@ -161,7 +161,7 @@
     {
       "id": "browser-accuracy",
       "title": "Browser Accuracy Infrastructure",
-      "description": "Pretext is validated against real browser layout in Chrome, Safari, and Firefox — currently perfect across all three. The accuracy sweep renders text in both the DOM and Pretext, comparing line breaks at every combination of 4 fonts, 8 sizes, 8 widths, and 30 texts. Checked-in snapshots serve as regression gates. The diagnostic tools include a probe page for isolating individual snippets and a corpus viewer for deep-diving into mismatches.",
+      "description": "Pretext is validated against real browser layout in Chrome, Safari, and Firefox — currently perfect across all three. The accuracy sweep compares line breaks across every combination of fonts, sizes, and widths, with checked-in snapshots as regression gates.",
       "focusDirectory": "pages",
       "colorMode": "fileTypes",
       "highlightLayers": [
@@ -193,7 +193,7 @@
     {
       "id": "automation-scripts",
       "title": "Test Automation & Scripts",
-      "description": "A suite of browser-automation scripts drives headless accuracy sweeps, corpus checks, benchmark snapshots, and font-matrix validation. The shared automation harness provides a session manager with a self-healing lock. Each checker launches a temporary server, opens a real browser, and scrapes results — ensuring the library matches real browser layout, not just unit-test expectations.",
+      "description": "The shared automation harness manages browser sessions with a self-healing lock. Each checker launches a temporary server, opens a real browser, and scrapes results — ensuring the library matches real browser layout, not just unit-test expectations.",
       "focusDirectory": "scripts",
       "colorMode": "fileTypes",
       "highlightLayers": [
