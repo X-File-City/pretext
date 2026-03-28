@@ -193,7 +193,7 @@
     {
       "id": "automation-scripts",
       "title": "Test Automation & Scripts",
-      "description": "A suite of browser-automation scripts drives headless accuracy sweeps, corpus checks, benchmark snapshots, and font-matrix validation. The shared automation harness provides a session manager with a self-healing lock. Each checker spins up a temporary server, navigates a real browser to the test page, and scrapes results — ensuring the library matches real browser layout, not just unit-test expectations.",
+      "description": "A suite of browser-automation scripts drives headless accuracy sweeps, corpus checks, benchmark snapshots, and font-matrix validation. The shared automation harness provides a session manager with a self-healing lock. Each checker launches a temporary server, opens a real browser, and scrapes results — ensuring the library matches real browser layout, not just unit-test expectations.",
       "focusDirectory": "scripts",
       "colorMode": "fileTypes",
       "highlightLayers": [
