@@ -29,7 +29,7 @@
     {
       "id": "core-engine",
       "title": "The Core Engine",
-      "description": "The heart of Pretext lives in four files. The layout module (in red) is the resize hot path — pure arithmetic, no DOM, no allocations. The analysis and measurement modules (in amber) handle one-time prepare work: segmentation, glue rules, canvas caching, and browser-profile shims. The line-break module (in purple) is the line-walking core shared by all layout APIs.",
+      "description": "The heart of Pretext lives in four files. The layout module is the resize hot path — pure arithmetic, no DOM, no allocations. The analysis and measurement modules handle one-time prepare work: segmentation, glue rules, canvas caching, and browser-profile shims. The line-break module is the line-walking core shared by all layout APIs.",
       "focusDirectory": "src",
       "colorMode": "fileTypes",
       "highlightLayers": [
@@ -69,7 +69,7 @@
     {
       "id": "two-phase-api",
       "title": "The Two-Phase API",
-      "description": "Pretext splits work into two phases. The prepare phase (in green) does expensive one-time segmenting, measuring, and caching, returning an opaque handle. The layout phase then uses only cached arithmetic — safe to call thousands of times per frame. A richer variant (in indigo) also exposes segment arrays and bidi levels for custom rendering.",
+      "description": "Pretext splits work into two phases. The prepare phase does expensive one-time segmenting, measuring, and caching, returning an opaque handle. The layout phase then uses only cached arithmetic — safe to call thousands of times per frame. A richer variant also exposes segment arrays and bidi levels for custom rendering.",
       "focusDirectory": "src",
       "colorMode": "fileTypes",
       "highlightLayers": [
@@ -101,7 +101,7 @@
     {
       "id": "multilingual-corpora",
       "title": "Multilingual Test Corpora",
-      "description": "Each corpus is a real literary or product-shaped text used as a regression canary, grouped here by script family: right-to-left (in amber), CJK (in red), and Southeast Asian (in purple). The mixed app text (in green) is the first-class product canary, catching URL wrapping, emoji runs, and mixed-script punctuation.",
+      "description": "Each corpus is a real literary or product-shaped text used as a regression canary, grouped here by script family: right-to-left, CJK, and Southeast Asian. The mixed app text is the first-class product canary, catching URL wrapping, emoji runs, and mixed-script punctuation.",
       "focusDirectory": "corpora",
       "colorMode": "fileTypes",
       "highlightLayers": [
@@ -161,7 +161,7 @@
     {
       "id": "browser-accuracy",
       "title": "Browser Accuracy Infrastructure",
-      "description": "Pretext is validated against real browser layout in Chrome, Safari, and Firefox — currently 7680/7680 across all three. The accuracy sweep (in red) renders text in both the DOM and Pretext, comparing line breaks at every combination of 4 fonts, 8 sizes, 8 widths, and 30 texts. Checked-in snapshots serve as regression gates. The diagnostic tools (in amber) include a probe page for isolating individual snippets and a corpus viewer for deep-diving into mismatches.",
+      "description": "Pretext is validated against real browser layout in Chrome, Safari, and Firefox — currently perfect across all three. The accuracy sweep renders text in both the DOM and Pretext, comparing line breaks at every combination of 4 fonts, 8 sizes, 8 widths, and 30 texts. Checked-in snapshots serve as regression gates. The diagnostic tools include a probe page for isolating individual snippets and a corpus viewer for deep-diving into mismatches.",
       "focusDirectory": "pages",
       "colorMode": "fileTypes",
       "highlightLayers": [
@@ -193,7 +193,7 @@
     {
       "id": "automation-scripts",
       "title": "Test Automation & Scripts",
-      "description": "A suite of browser-automation scripts drives headless accuracy sweeps, corpus checks, benchmark snapshots, and font-matrix validation. The shared automation harness (in blue) provides a session manager with a self-healing lock. Each checker (in green) spins up a temporary server, navigates a real browser to the test page, and scrapes results — ensuring the library matches real browser layout, not just unit-test expectations.",
+      "description": "A suite of browser-automation scripts drives headless accuracy sweeps, corpus checks, benchmark snapshots, and font-matrix validation. The shared automation harness provides a session manager with a self-healing lock. Each checker spins up a temporary server, navigates a real browser to the test page, and scrapes results — ensuring the library matches real browser layout, not just unit-test expectations.",
       "focusDirectory": "scripts",
       "colorMode": "fileTypes",
       "highlightLayers": [
@@ -227,7 +227,7 @@
     {
       "id": "interactive-demos",
       "title": "Interactive Demos",
-      "description": "The flagship demos (in indigo) include a bubble shrinkwrap layout and a two-column editorial spread with obstacle-aware reflow. The other demos (in green) cover virtualized masonry cards, accordion height animation, and a standalone editorial engine.",
+      "description": "The flagship demos include a bubble shrinkwrap layout and a two-column editorial spread with obstacle-aware reflow. The other demos cover virtualized masonry cards, accordion height animation, and a standalone editorial engine.",
       "focusDirectory": "pages/demos",
       "colorMode": "fileTypes",
       "highlightLayers": [
