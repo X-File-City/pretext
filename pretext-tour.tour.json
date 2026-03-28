@@ -1,0 +1,320 @@
+{
+  "id": "pretext-codebase-tour",
+  "title": "Pretext: Browser-Accurate Text Layout in Pure JS",
+  "description": "A guided tour of Pretext's architecture — from the core measurement engine to multilingual corpus testing and interactive demos.",
+  "version": "1.0.0",
+  "steps": [
+    {
+      "id": "overview",
+      "title": "The Big Picture",
+      "description": "Pretext is a pure JavaScript library that measures multiline text layout without touching the DOM. It replaces expensive layout-reflow calls with cached canvas measurements and pure arithmetic, unlocking virtualization, masonry layouts, and layout-shift-free rendering. The codebase is organized into a tight core engine, browser accuracy infrastructure, multilingual test corpora, benchmarks, and interactive demos.",
+      "colorMode": "fileTypes",
+      "highlightLayers": [
+        {
+          "id": "core-dirs",
+          "name": "Key Areas",
+          "color": "#3b82f6",
+          "items": [
+            { "path": "src", "type": "directory" },
+            { "path": "pages", "type": "directory" },
+            { "path": "corpora", "type": "directory" },
+            { "path": "scripts", "type": "directory" }
+          ],
+          "opacity": 0.7,
+          "renderStrategy": "border"
+        }
+      ],
+      "focusDirectory": ""
+    },
+    {
+      "id": "core-engine",
+      "title": "The Core Engine",
+      "description": "The heart of Pretext lives in four files. The layout module (in red) is the resize hot path — pure arithmetic, no DOM, no allocations. The analysis and measurement modules (in amber) handle one-time prepare work: segmentation, glue rules, canvas caching, and browser-profile shims. The line-break module (in purple) is the line-walking core shared by all layout APIs.",
+      "focusDirectory": "src",
+      "colorMode": "fileTypes",
+      "highlightLayers": [
+        {
+          "id": "hot-path",
+          "name": "Layout Hot Path",
+          "color": "#ef4444",
+          "items": [
+            { "path": "src/layout.ts", "type": "file" }
+          ],
+          "opacity": 0.8,
+          "renderStrategy": "border"
+        },
+        {
+          "id": "prepare-phase",
+          "name": "Prepare Phase",
+          "color": "#f59e0b",
+          "items": [
+            { "path": "src/analysis.ts", "type": "file" },
+            { "path": "src/measurement.ts", "type": "file" }
+          ],
+          "opacity": 0.7,
+          "renderStrategy": "border"
+        },
+        {
+          "id": "line-breaking",
+          "name": "Line Breaking",
+          "color": "#8b5cf6",
+          "items": [
+            { "path": "src/line-break.ts", "type": "file" }
+          ],
+          "opacity": 0.7,
+          "renderStrategy": "border"
+        }
+      ]
+    },
+    {
+      "id": "two-phase-api",
+      "title": "The Two-Phase API",
+      "description": "Pretext splits work into two phases. The prepare phase (in green) does expensive one-time segmenting, measuring, and caching, returning an opaque handle. The layout phase then uses only cached arithmetic — safe to call thousands of times per frame. A richer variant (in indigo) also exposes segment arrays and bidi levels for custom rendering.",
+      "focusDirectory": "src",
+      "colorMode": "fileTypes",
+      "highlightLayers": [
+        {
+          "id": "api-surface",
+          "name": "Public API",
+          "color": "#10b981",
+          "items": [
+            { "path": "src/layout.ts", "type": "file" },
+            { "path": "src/analysis.ts", "type": "file" },
+            { "path": "src/measurement.ts", "type": "file" }
+          ],
+          "opacity": 0.7,
+          "renderStrategy": "border"
+        },
+        {
+          "id": "rich-path",
+          "name": "Rich Line APIs",
+          "color": "#6366f1",
+          "items": [
+            { "path": "src/line-break.ts", "type": "file" },
+            { "path": "src/bidi.ts", "type": "file" }
+          ],
+          "opacity": 0.7,
+          "renderStrategy": "border"
+        }
+      ]
+    },
+    {
+      "id": "multilingual-corpora",
+      "title": "Multilingual Test Corpora",
+      "description": "Each corpus is a real literary or product-shaped text used as a regression canary, grouped here by script family: right-to-left (in amber), CJK (in red), and Southeast Asian (in purple). The mixed app text (in green) is the first-class product canary, catching URL wrapping, emoji runs, and mixed-script punctuation.",
+      "focusDirectory": "corpora",
+      "colorMode": "fileTypes",
+      "highlightLayers": [
+        {
+          "id": "rtl-corpora",
+          "name": "RTL Scripts",
+          "color": "#f59e0b",
+          "items": [
+            { "path": "corpora/ar-al-bukhala.txt", "type": "file" },
+            { "path": "corpora/ar-risalat-al-ghufran-part-1.txt", "type": "file" },
+            { "path": "corpora/he-masaot-binyamin-metudela.txt", "type": "file" },
+            { "path": "corpora/ur-chughd.txt", "type": "file" }
+          ],
+          "opacity": 0.7,
+          "renderStrategy": "border"
+        },
+        {
+          "id": "cjk-corpora",
+          "name": "CJK Scripts",
+          "color": "#ef4444",
+          "items": [
+            { "path": "corpora/ja-kumo-no-ito.txt", "type": "file" },
+            { "path": "corpora/ja-rashomon.txt", "type": "file" },
+            { "path": "corpora/zh-guxiang.txt", "type": "file" },
+            { "path": "corpora/zh-zhufu.txt", "type": "file" },
+            { "path": "corpora/ko-unsu-joh-eun-nal.txt", "type": "file" }
+          ],
+          "opacity": 0.7,
+          "renderStrategy": "border"
+        },
+        {
+          "id": "sea-corpora",
+          "name": "SE Asian Scripts",
+          "color": "#8b5cf6",
+          "items": [
+            { "path": "corpora/th-nithan-vetal-story-1.txt", "type": "file" },
+            { "path": "corpora/th-nithan-vetal-story-7.txt", "type": "file" },
+            { "path": "corpora/km-prachum-reuang-preng-khmer-volume-7-stories-1-10.txt", "type": "file" },
+            { "path": "corpora/my-bad-deeds-return-to-you-teacher.txt", "type": "file" },
+            { "path": "corpora/my-cunning-heron-teacher.txt", "type": "file" }
+          ],
+          "opacity": 0.7,
+          "renderStrategy": "border"
+        },
+        {
+          "id": "product-canary",
+          "name": "Product Canary",
+          "color": "#10b981",
+          "items": [
+            { "path": "corpora/mixed-app-text.txt", "type": "file" }
+          ],
+          "opacity": 0.8,
+          "renderStrategy": "border"
+        }
+      ]
+    },
+    {
+      "id": "browser-accuracy",
+      "title": "Browser Accuracy Infrastructure",
+      "description": "Pretext is validated against real browser layout in Chrome, Safari, and Firefox — currently 7680/7680 across all three. The accuracy sweep (in red) renders text in both the DOM and Pretext, comparing line breaks at every combination of 4 fonts, 8 sizes, 8 widths, and 30 texts. Checked-in snapshots serve as regression gates. The diagnostic tools (in amber) include a probe page for isolating individual snippets and a corpus viewer for deep-diving into mismatches.",
+      "focusDirectory": "pages",
+      "colorMode": "fileTypes",
+      "highlightLayers": [
+        {
+          "id": "accuracy-pages",
+          "name": "Accuracy Sweep",
+          "color": "#ef4444",
+          "items": [
+            { "path": "pages/accuracy.ts", "type": "file" },
+            { "path": "pages/accuracy.html", "type": "file" }
+          ],
+          "opacity": 0.8,
+          "renderStrategy": "border"
+        },
+        {
+          "id": "diagnostic-tools",
+          "name": "Diagnostic Tools",
+          "color": "#f59e0b",
+          "items": [
+            { "path": "pages/diagnostic-utils.ts", "type": "file" },
+            { "path": "pages/probe.ts", "type": "file" },
+            { "path": "pages/corpus.ts", "type": "file" }
+          ],
+          "opacity": 0.7,
+          "renderStrategy": "border"
+        }
+      ]
+    },
+    {
+      "id": "automation-scripts",
+      "title": "Test Automation & Scripts",
+      "description": "A suite of browser-automation scripts drives headless accuracy sweeps, corpus checks, benchmark snapshots, and font-matrix validation. The shared automation harness (in blue) provides a session manager with a self-healing lock. Each checker (in green) spins up a temporary server, navigates a real browser to the test page, and scrapes results — ensuring the library matches real browser layout, not just unit-test expectations.",
+      "focusDirectory": "scripts",
+      "colorMode": "fileTypes",
+      "highlightLayers": [
+        {
+          "id": "automation-core",
+          "name": "Automation Harness",
+          "color": "#3b82f6",
+          "items": [
+            { "path": "scripts/browser-automation.ts", "type": "file" }
+          ],
+          "opacity": 0.8,
+          "renderStrategy": "border"
+        },
+        {
+          "id": "checkers",
+          "name": "Check Scripts",
+          "color": "#10b981",
+          "items": [
+            { "path": "scripts/accuracy-check.ts", "type": "file" },
+            { "path": "scripts/benchmark-check.ts", "type": "file" },
+            { "path": "scripts/corpus-check.ts", "type": "file" },
+            { "path": "scripts/corpus-sweep.ts", "type": "file" },
+            { "path": "scripts/corpus-font-matrix.ts", "type": "file" },
+            { "path": "scripts/gatsby-check.ts", "type": "file" }
+          ],
+          "opacity": 0.7,
+          "renderStrategy": "border"
+        }
+      ]
+    },
+    {
+      "id": "interactive-demos",
+      "title": "Interactive Demos",
+      "description": "The flagship demos (in indigo) include a bubble shrinkwrap layout and a two-column editorial spread with obstacle-aware reflow. The other demos (in green) cover virtualized masonry cards, accordion height animation, and a standalone editorial engine.",
+      "focusDirectory": "pages/demos",
+      "colorMode": "fileTypes",
+      "highlightLayers": [
+        {
+          "id": "flagship-demos",
+          "name": "Flagship Demos",
+          "color": "#6366f1",
+          "items": [
+            { "path": "pages/demos/dynamic-layout.ts", "type": "file" },
+            { "path": "pages/demos/bubbles.ts", "type": "file" }
+          ],
+          "opacity": 0.8,
+          "renderStrategy": "border"
+        },
+        {
+          "id": "other-demos",
+          "name": "Other Demos",
+          "color": "#10b981",
+          "items": [
+            { "path": "pages/demos/masonry/index.ts", "type": "file" },
+            { "path": "pages/demos/accordion.ts", "type": "file" },
+            { "path": "pages/demos/editorial-engine.ts", "type": "file" }
+          ],
+          "opacity": 0.7,
+          "renderStrategy": "border"
+        }
+      ]
+    },
+    {
+      "id": "wrapup",
+      "title": "Full Codebase Overview",
+      "description": "That's the full picture — every layer working together to keep text layout fast, accurate, and honest to the browser. Explore the highlighted areas to dig deeper, or run the demos to see it in action.",
+      "focusDirectory": "",
+      "colorMode": "fileTypes",
+      "highlightLayers": [
+        {
+          "id": "core-engine",
+          "name": "Core Engine",
+          "color": "#ef4444",
+          "items": [
+            { "path": "src", "type": "directory" }
+          ],
+          "opacity": 0.7,
+          "renderStrategy": "border"
+        },
+        {
+          "id": "test-corpora",
+          "name": "Test Corpora",
+          "color": "#8b5cf6",
+          "items": [
+            { "path": "corpora", "type": "directory" }
+          ],
+          "opacity": 0.7,
+          "renderStrategy": "border"
+        },
+        {
+          "id": "browser-pages",
+          "name": "Pages & Demos",
+          "color": "#3b82f6",
+          "items": [
+            { "path": "pages", "type": "directory" }
+          ],
+          "opacity": 0.7,
+          "renderStrategy": "border"
+        },
+        {
+          "id": "automation",
+          "name": "Automation Scripts",
+          "color": "#10b981",
+          "items": [
+            { "path": "scripts", "type": "directory" }
+          ],
+          "opacity": 0.7,
+          "renderStrategy": "border"
+        },
+        {
+          "id": "accuracy-data",
+          "name": "Accuracy Snapshots",
+          "color": "#f59e0b",
+          "items": [
+            { "path": "accuracy", "type": "directory" },
+            { "path": "benchmarks", "type": "directory" }
+          ],
+          "opacity": 0.7,
+          "renderStrategy": "border"
+        }
+      ]
+    }
+  ]
+}
